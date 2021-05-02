@@ -6,7 +6,7 @@
 
 <div class="container">
   <h1>Edit {{user.first_name}} {{user.last_name}}</h1>
-  <form action="/{{user.id}}/edit" method="POST">
+  <form action="/users/{{user.id}}/edit" method="POST">
     <div>
       <label for="first_name" class="form-label">First Name</label>
       <input

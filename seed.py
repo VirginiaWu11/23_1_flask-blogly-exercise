@@ -1,5 +1,5 @@
 """Seed file to make sample data for blogly db."""
-from models import User, db
+from models import User, db, Post
 from app import app
 
 # Create all tables
@@ -18,6 +18,19 @@ whiskey = User(first_name= 'Whiskey', last_name = 'C.', image_url="https://image
 db.session.add(joel)
 db.session.add(spike)
 db.session.add(whiskey)
+
+# Commit
+db.session.commit()
+
+# Add posts
+p1 = Post(title='hi', content='test1', user_id= 1)
+p2 = Post(title='hi2', content='test2', user_id= 1)
+p3 = Post(title='hi3', content='test3', user_id= 3)
+
+# Add new objects to session
+db.session.add(p1)
+db.session.add(p2)
+db.session.add(p3)
 
 # Commit
 db.session.commit()

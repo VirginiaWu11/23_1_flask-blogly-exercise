@@ -43,17 +43,17 @@ def add_user():
 
     return redirect(f'/users')
 
-@app.route('/<int:user_id>')
+@app.route('/users/<int:user_id>')
 def user_detail(user_id):
     user = User.query.get_or_404(user_id)
     return render_template('userdetail.html',user=user)
 
-@app.route('/<int:user_id>/edit')
+@app.route('/users/<int:user_id>/edit')
 def edit_user(user_id):
     user = User.query.get_or_404(user_id)
     return render_template('edituser.html',user=user)
 
-@app.route('/<int:user_id>/edit', methods=['POST'] )
+@app.route('/users/<int:user_id>/edit', methods=['POST'] )
 def edit_user_post(user_id):
     user = User.query.get_or_404(user_id)
     first_name= request.form['first_name']
@@ -72,10 +72,29 @@ def edit_user_post(user_id):
     return redirect(f'/users')
 
 
-@app.route('/<int:user_id>/delete')
+@app.route('/users/<int:user_id>/delete')
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
     User.query.filter_by(id=user_id).delete()
     db.session.commit()
     flash(f"User {user.first_name} deleted!", 'danger')
+    return redirect('/')
+
+
+# ------------ Post Routes
+
+@app.route('/users/<int:user_id>/posts/new')
+def new_post_form(user_id):
+    user = User.query.get_or_404(user_id)
+    return render_template('newpost.html',user=user)
+
+@app.route('/users/<int:user_id>/posts/new', methods=['POST'])
+def submit_new_post(user_id):
+    title = request.form['title']
+    content = request.form['content']
+    
+    post= Post(title=title, content=content, user_id=user_id)
+
+    db.session.add(post)
+    db.session.commit()
     return redirect('/')

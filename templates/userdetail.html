@@ -7,7 +7,15 @@
 <div class="container">
   <h1>{{user.first_name}} {{user.last_name}}</h1>
   <img src="{{user.image_url}}" class="w-25 p-3" />
-  <a href="/{{user.id}}/edit" class="btn btn-primary">Edit</a>
-  <a href="/{{user.id}}/delete" class="btn btn-danger">Delete</a>
+  <a href="/users/{{user.id}}/edit" class="btn btn-primary">Edit</a>
+  <a href="/users/{{user.id}}/delete" class="btn btn-danger">Delete</a>
+
+  <h2>Posts</h2>
+  <ul>
+    {% for post in user.posts %}
+    <li>{{post.title}}</li>
+    {% endfor %}
+  </ul>
+  <a href="/users/{{user.id}}/posts/new" class="btn btn-primary">Add Post</a>
 </div>
 {% endblock %}
