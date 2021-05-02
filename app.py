@@ -1,7 +1,7 @@
 """Blogly application."""
 
 from flask import Flask, request, render_template,  redirect, flash, session
-from models import db, connect_db, User
+from models import db, connect_db, User, Post
 from flask_debugtoolbar import DebugToolbarExtension
 
 
@@ -54,7 +54,7 @@ def edit_user(user_id):
     return render_template('edituser.html',user=user)
 
 @app.route('/users/<int:user_id>/edit', methods=['POST'] )
-def edit_user_post(user_id):
+def edit_user_profile(user_id):
     user = User.query.get_or_404(user_id)
     first_name= request.form['first_name']
     last_name= request.form['last_name']
@@ -72,7 +72,7 @@ def edit_user_post(user_id):
     return redirect(f'/users')
 
 
-@app.route('/users/<int:user_id>/delete')
+@app.route('/users/<int:user_id>/delete', methods=["POST"])
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
     User.query.filter_by(id=user_id).delete()
@@ -97,4 +97,45 @@ def submit_new_post(user_id):
 
     db.session.add(post)
     db.session.commit()
-    return redirect('/')
+    flash(f"New Post, {post.title}, added!", 'success')
+
+    return redirect(f'/users/{user_id}')
+
+@app.route('/posts/<int:post_id>')
+def post_detail(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template('/postdetail.html',post=post)
+
+@app.route('/posts/<int:post_id>/edit' )
+def edit_post_form(post_id):
+    post=Post.query.get_or_404(post_id)
+    return render_template('editpost.html',post=post)
+
+@app.route('/posts/<int:post_id>/edit', methods=['POST'] )
+def edit_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    title= request.form['title']
+    content= request.form['content']
+
+    post.title = title
+    post.content = content
+
+    db.session.add(post)
+    db.session.commit()
+
+    flash(f'Post "{post.title}" updated!', 'success')
+
+    return redirect(f'/posts/{post_id}')
+
+
+
+@app.route('/posts/<int:post_id>/delete', methods=['POST'])
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    user_id = post.users.id
+    Post.query.filter_by(id=post_id).delete()
+
+    db.session.commit()
+    flash(f'Post "{post.title}"" by {post.users.first_name} {post.users.last_name} has been deleted!', 'danger')
+
+    return redirect(f'/users/{user_id}')

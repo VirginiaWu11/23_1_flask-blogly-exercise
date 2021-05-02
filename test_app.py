@@ -42,11 +42,11 @@ class UsersTest(TestCase):
 
     def test_show_user(self):
         with app.test_client() as client:
-            resp = client.get(f"/{self.user.id}")
+            resp = client.get(f"/users/{self.user.id}")
             html = resp.get_data(as_text=True)
 
             self.assertEqual(resp.status_code, 200)
-            self.assertIn(f'<h1>{self.user.first_name}', html)
+            self.assertIn(self.user.first_name, html)
             self.assertIn(self.user.last_name, html)
 
     def test_add_user(self):
